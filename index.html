@@ -38,9 +38,9 @@ body {
     background: white;
     z-index: 2000;
     box-shadow: -5px 0 25px rgba(0,0,0,0.15);
-    transition: 0.4s ease;
+    /* מעבר מהיר וחלק יותר */
+    transition: right 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* פתרון גלילה מבני */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -63,7 +63,12 @@ body {
 }
 .nav-link:hover { background: #fdfaf4; color: var(--gold); }
 
-.sub-menu { display: none; background: #f9f9f9; padding: 5px 0; }
+/* תת תפריט מהיר */
+.sub-menu { 
+    display: none; 
+    background: #f9f9f9; 
+    padding: 5px 0;
+}
 .sub-menu.show { display: block; }
 .sub-menu a {
     display: block; padding: 10px 30px; color: #555; text-decoration: none; font-size: 0.95rem; cursor: pointer;
@@ -230,7 +235,7 @@ const allProducts = [
         img: 'Ma1/Sf589c39bd2c44e2d9e927cea3c067506p.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c4MRaCPn'
     },
-        {
+    {
         id: 10,
         cat: 'boots',
         gender: 'men',
@@ -300,7 +305,7 @@ const allProducts = [
         img: 'Ma1/S6c2eae20355d470586f6f66dac47a36a9.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c3aYGoLJ'
     },
-        {
+    {
         id: 17,
         cat: 'short_shirts',
         gender: 'men',
@@ -351,7 +356,6 @@ const allProducts = [
         link: 'https://s.click.aliexpress.com/e/_c2RiwK9b'
     },
 ];
-
 
 let favorites = JSON.parse(localStorage.getItem('favs')) || [];
 
