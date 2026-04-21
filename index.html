@@ -30,10 +30,25 @@ body {
 }
 
 .side-nav {
-    position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
-    background: white; z-index: 2000; box-shadow: -5px 0 25px rgba(0,0,0,0.15);
-    transition: 0.4s ease; padding: 80px 10px 20px; overflow-y: auto;
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    height: 100%; /* תופס את כל גובה המסך */
+    background: white;
+    z-index: 2000;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+    transition: 0.4s ease;
+    
+    /* פתרון הגלילה: */
+    overflow-y: auto; /* מאפשר גלילה אנכית */
+    padding-top: 80px; /* רווח מלמעלה שלא יתנגש בכפתור ה-X */
+    padding-bottom: 100px; /* הוספת "אוויר" בתחתית כדי שהפריט האחרון לא ייבלע */
+    
+    /* מונע מהתפריט לזוז לצדדים בטעות */
+    overflow-x: hidden; 
 }
+
 
 .side-nav.open { right: 0; }
 
