@@ -3,394 +3,449 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orvanni</title>
+<title>Orvanni | Fashion Store</title>
 
 <style>
-/* עיצוב כללי ורקע יוקרתי */
+:root {
+    --gold: #c5a059;
+    --dark: #111;
+    --light: #f9f9f9;
+}
+
 body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-image: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
-  color: #333;
-  scroll-behavior: smooth;
-  line-height: 1.6;
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #fdfbfb;
+    color: var(--dark);
+    line-height: 1.6;
+    scroll-behavior: smooth;
 }
 
-header {
-  background: #000;
-  color: white;
-  padding: 50px 20px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  cursor: pointer;
+/* תפריט צף */
+.floating-menu-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 2001;
+    background: var(--dark); color: white; width: 55px; height: 55px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 24px;
 }
 
-header h1 {
-  font-size: 3.5rem;
-  margin: 0;
-  letter-spacing: 5px;
-  font-weight: 300;
+.side-nav {
+    position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
+    background: white; z-index: 2000; box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+    transition: 0.4s ease; padding: 80px 10px 20px; overflow-y: auto;
 }
 
-nav {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  padding: 18px;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+.side-nav.open { right: 0; }
+
+.nav-item { border-bottom: 1px solid #f0f0f0; }
+.nav-link {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer;
+}
+.nav-link:hover { background: #fdfaf4; color: var(--gold); }
+
+.sub-menu { display: none; background: #f9f9f9; padding: 5px 0; }
+.sub-menu.show { display: block; }
+.sub-menu a {
+    display: block; padding: 10px 30px; color: #555; text-decoration: none; font-size: 0.95rem; cursor: pointer;
 }
 
-nav a {
-  color: #111;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: 0.3s;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-}
+header { background: #000; color: white; padding: 60px 20px; text-align: center; cursor: pointer; }
+header h1 { font-size: 3.5rem; margin: 0; letter-spacing: 6px; font-weight: 300; }
 
-nav a:hover, nav a.active {
-  color: #c5a059;
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 70vh; }
+.section-title { border-right: 5px solid var(--gold); padding-right: 15px; margin: 40px 0 30px; }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  min-height: 60vh;
-}
-
-h2 {
-  color: #111;
-  margin: 40px 0 30px;
-  font-weight: 400;
-  text-align: center;
-  position: relative;
-  font-size: 2rem;
-}
-
-h2::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 2px;
-  background: #c5a059;
-  margin: 15px auto;
-}
-
-.products {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); 
-  gap: 25px;
-  align-items: stretch;
-  margin-bottom: 50px;
+/* תצוגת מוצרים - 2 טורים בטלפון */
+.products { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 15px; 
 }
 
 @media (min-width: 768px) {
-  .products {
-    grid-template-columns: repeat(4, 1fr); 
-  }
+    .products { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
 }
 
-.card {
-  background: white;
-  border-radius: 4px;
-  padding: 0;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-  transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  border: 1px solid #f0f0f0;
-}
+.card { background: white; border: 1px solid #eee; position: relative; transition: 0.4s; display: flex; flex-direction: column; }
+.card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
 
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  border-color: #c5a059;
+.fav-btn {
+    position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9);
+    border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;
+    font-size: 18px; color: #ddd; z-index: 10;
 }
+.fav-btn.active { color: #e74c3c; }
 
-.card img {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-}
+.card-body { padding: 12px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
+.card h3 { font-size: 0.95rem; margin: 5px 0; }
+.desc { font-size: 0.8rem; color: #777; margin-bottom: 8px; flex-grow: 1; }
+.price { font-weight: bold; font-size: 1.1rem; color: var(--dark); margin-bottom: 10px; }
 
-.card-body {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
+.btn { display: block; background: var(--dark); color: white; padding: 10px; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
 
-.card h3 {
-  font-size: 1.05rem;
-  margin: 0 0 10px;
-  color: #111;
-  min-height: 45px;
-  font-weight: 600;
-}
-
-.card p {
-  font-size: 0.85rem;
-  margin: 10px 0;
-  line-height: 1.5;
-  color: #666;
-  text-align: right;
-  flex-grow: 1;
-}
-
-.price-tag {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #111;
-  margin: 15px 0;
-}
-
-.rating {
-  color: #c5a059;
-  font-size: 0.85rem;
-  margin-bottom: 10px;
-}
-
-.btn {
-  display: block;
-  padding: 12px;
-  background: #111;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 0.9rem;
-  transition: 0.3s;
-  letter-spacing: 1px;
-}
-
-.btn:hover {
-  background: #c5a059;
-}
-
-.recommendation-section {
-    background: #fdf6e9;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 40px;
-    border: 1px dashed #c5a059;
-}
-
-.banner {
-  background: white;
-  padding: 40px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-  line-height: 1.8;
-  font-size: 0.95rem;
-  border-right: 4px solid #c5a059;
-}
-
-footer {
-  background: #000;
-  color: white;
-  text-align: center;
-  padding: 60px 20px;
-  margin-top: 80px;
-}
-
-#backToTop {
-  position: fixed; bottom: 30px; right: 20px;
-  background: #c5a059; color: white; width: 50px; height: 50px;
-  display: none; align-items: center; justify-content: center;
-  text-decoration: none; z-index: 1000;
-}
-
-#cookieBox {
-  position: fixed; bottom: 20px; right: 20px; left: 20px;
-  background: #fff; color: #111; padding: 25px; border-radius: 4px;
-  display: none; z-index: 2000; max-width: 450px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  border-top: 3px solid #c5a059;
-}
-
-#cookieBox button {
-  margin-top: 15px; padding: 12px; background: #111; border: none;
-  color: white; cursor: pointer; width: 100%;
-}
+.banner { background: white; padding: 30px; border-right: 4px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+footer { background: #000; color: white; text-align: center; padding: 50px; margin-top: 80px; }
 </style>
 </head>
 <body>
 
-<header onclick="showPage('home')">
-  <h1>Orvanni</h1>
-  <p>נעליים בסטייל</p>
-</header>
+<div class="floating-menu-btn" onclick="toggleMenu()">☰</div>
 
-<nav>
-  <a onclick="showPage('home')" id="nav-home">דף הבית</a>
-  <a onclick="showPage('women')" id="nav-women">נעלי נשים</a>
-  <a onclick="showPage('men')" id="nav-men">נעלי גברים</a>
-  <a onclick="showPage('kids')" id="nav-kids">נעלי ילדים</a>
-  <a onclick="showPage('about')" id="nav-about">תנאי שימוש</a>
-</nav>
+<div class="side-nav" id="sideNav">
+    <a class="nav-link" onclick="showPage('home')">🏠 דף הבית</a>
+    <div id="menu-items-placeholder"></div>
+    <a class="nav-link" onclick="showPage('about')">📜 תנאי שימוש</a>
+</div>
+
+<header onclick="showPage('home')">
+    <h1>Orvanni</h1>
+    <p>Premium Collection 2026</p>
+</header>
 
 <div class="container" id="main-content"></div>
 
 <footer>
-  <p>© 2026 Orvanni | חוויית קניות חכמה</p>
+    <p>© 2026 Orvanni | Fashion Store</p>
 </footer>
 
-<a href="#" id="backToTop">↑</a>
-
-<div id="cookieBox">
-  <p>אנו משתמשים בעוגיות כדי לשפר את חוויית הגלישה שלך.</p>
-  <button onclick="acceptCookies()">אישור והמשך</button>
-</div>
-
 <script>
+const categoryNames = {
+    short_shirts: 'חולצות קצרות', long_shirts: 'חולצות ארוכות',
+    short_pants: 'מכנס קצר', long_pants: 'מכנס ארוך',
+    sneakers: 'נעלי ספורט', boots: 'מגפיים', sandals: 'סנדלים'
+};
+
 const allProducts = [
-  // --- נעלי נשים ---
-  { id: 1, cat: 'women', tag: 'slippers', title: 'כפכפי ענן פלטפורמה לקיץ', price: '₪15.02', img: 'Ma1/S6899efa1adcc4e8fbdd219518db4986c3.png (1).avif', link: 'https://s.click.aliexpress.com/e/_c3aerJBn', desc: 'סנדלי נוחות לים ולבית עם סוליית EVA עבה ורכה במיוחד. עיצוב ארגונומי המונע החלקה, מעניק תמיכה לכף הרגל תחושת ריחופ בכל צעד.' },
-  { id: 2, cat: 'women', tag: 'sneakers', title: 'סניקרס נשים אופנתיות ונושמות', price: '₪36.96', img: 'Ma1/Hbaddcbce75504984a7c5f169650fddd6B.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c4Ovq6PF', desc: 'נעלי הליכה יומיומיות בעיצוב קליל עם בד רשת (Mesh) המאפשר אוורור מקסימלי לכף הרגל. סוליה שטוחה וגמישה המתאימה לפעילות ספורטיבית, חדר כושר או הליכה ממושכת בסטייל נקי ומודרני.' },
-  { id: 3, cat: 'women', tag: 'sneakers', title: 'סניקרס פלטפורמה עם כרית אוויר', price: '₪111.43', img: 'Ma1/S34b288af8e2f4757ae635361b032c610R.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3aWOukl', desc: 'נעלי הליכה אופנתיות עם סוליית פלטפורמה עבה הכוללת כרית אוויר לבלימת זעזועים. עיצוב המשלב נוחות יומיומית, גובה וסטייל, עם סוליה המונעת החלקה ליציבות מקסימלית בכל צעד.' },
-  { id: 4, cat: 'women', tag: 'boots', title: 'מגפי שלג יוקרתיים Waterproof', price: '₪74.44', img: 'Ma1/Sfc375c698f924ac8bd7a9e5543fa37edb.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c4FhxDG5', desc: 'מגפי חורף אופנתיים לנשים בעיצוב טרנדי לשנת 2025. המגפיים חסינים למים, כוללים בטנת פרווה מחממת ועקב נמוך לנוחות הליכה ממושכת. פתרון מושלם לימים גשומים ולשלג, המשלב הגנה מקסימלית עם סטייל מודרני.' },
-  { id: 5, cat: 'women', tag: 'boots', title: 'מגפי שלג Mid-Calf איכותיים', price: '₪80.50', img: 'Ma1/S9836b0b935a849379565f289ce01a6dev.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3s9s4Cv', desc: 'מגפי חורף גבוהים בעיצוב מרשים, המעניקים הגנה מקסימלית ושמירה על חום הרגל בתנאי קור קיצוניים. המגפיים חסינים למים, כוללים בטנה מחממת וסוליה בעלת אחיזה חזקה המתאימה להליכה בשלג ואפילו לטיולים (Hiking). שילוב של איכות ללא פשרות ונוחות יוצאת דופן.' },
-  { id: 6, cat: 'women', tag: 'boots', title: 'מגפי שלג Plush 2025 - דגם יוניסקס', price: '₪53.40', img: 'Ma1/S47657bb008fc42c4883fcc6cdc584f61X.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3e1m7XF', desc: 'מגפי חורף בעיצוב מודרני המתאימים לנשים ולגברים (Couples). המגפיים חסינים למים, בעלי בטנת פרווה עשירה לשמירה על חום מרבי וסוליית פלטפורמה מונעת החלקה. דגם קרסול קלאסי בצבע שחור שמתאים לכל לוק חורפי ומבטיח נוחות בכל צעד.' },
-  { id: 7, cat: 'women', tag: 'slippers', title: 'כפכפי כותנה Soft-Sole חורפיים', price: '₪38.02', img: 'Ma1/S57730935fcf24f969b51613cc32dc9b2R.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c4mofGXR', desc: 'כפכפי נוחות מעוצבים לנשים, עשויים כותנה איכותית ורכה לשמירה על חום כף הרגל. בעלי סוליה עבה וגמישה המעניקה תמיכה מירבית, מתאימים לשימוש ביתי או ליציאה קלה בחוץ עם הגנה נגד החלקה.' },
-  { id: 8, cat: 'women', tag: 'boots', title: 'מגפי פלטפורמה Plush Warm', price: '₪75.05', img: 'Ma1/S236d46b41e984420a1ebc4082e2e42ead.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c4tahSZL', desc: 'מגפי קרסול אופנתיים עם סוליית פלטפורמה מוגבהת המשלבים הגנה מלאה ממים ובטנת פרווה רכה ומחממת. עיצוב טרנדי המעניק גובה וסטייל מבלי להתפשר על נוחות, מושלמים להליכה בשלג או בימים גשומים וקרים.' },
-  { id: 18, cat: 'women', tag: 'slippers', title: 'כפכפי Fluffy יוקרתיים לחורף', price: '₪30.85', img: 'Ma1/S3ced99710ac54ac6b7d65f45fbeecdf48.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c45xkWsp', desc: 'נעלי בית חמימות ומפנקות במיוחד עם בטנת פרווה עבה ונעימה. בעלות סוליה עבה למניעת החלקה ונוחות מקסימלית בתוך הבית. עיצוב יוניסקס המתאים לזוגות, מושלם לשמירה על חום כף הרגל בימי החורף הקרים.' },
+    {
+        id: 1,
+        cat: 'sandals',
+        gender: 'men',
+        title: "סנדלי אופנה Outdoor לגבר - 2025",
+        desc: "סוליה עבה, נגד החלקה, קלות ונוחות לשימוש בבית ובחוץ.",
+        price: 32,
+        img: 'Ma1/S533fe869bf1a4561ad0b1d6030eb5872w.jpg.avif',
+        link: 'Https://s.click.aliexpress.com/e/_c40dnxzB'
+    },
+    {
+        id: 2,
+        cat: 'boots',
+        gender: 'women',
+        title: "מגפי שלג חורפיים לנשים",
+        desc: "מגפי קרסול איכותיים עם שרוכים, עמידים למים ומתאימים לטיולים. מידות 36-43.",
+        price: 91,
+        img: 'Ma1/S9736f5092eac41b688bcf71bcf6e38fcg.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3yfQEmV'
+    },
+    {
+        id: 3,
+        cat: 'sandals',
+        gender: 'men',
+        title: "כפכפי EVA לגבר עם סוליית עיסוי",
+        desc: "קלילות במיוחד, מתאימות לים ולשימוש יומיומי. מגוון צבעים לבחירה.",
+        price: 30,
+        img: 'Ma1/Se15d7a930f804adabbbba3774bb5510f8.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c37oSDYl'
+    },
+    {
+        id: 4,
+        cat: 'boots',
+        gender: 'men',
+        title: "מגפי בטיחות Steel Toe לגבר",
+        desc: "חסיני מים, עמידים למכות ודקירות, סוליית בטיחות ומתאימים גם לרכיבה.",
+        price: 121,
+        img: 'Ma1/S2662aacb61fc47acafdd3433505596c10.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3t7ai4h'
+    },
+    {
+        id: 5,
+        cat: 'sandals',
+        gender: 'men',
+        title: "כפכפי פרווה חמימים לגבר",
+        desc: "סוליה עבה ופרווה פנימית לשמירה על חום בתוך הבית. נגד החלקה.",
+        price: 32,
+        img: 'Ma1/S3ced99710ac54ac6b7d65f45fbeecdf48.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c2zqEF4N'
+    },
+    {
+        id: 6,
+        cat: 'boots',
+        gender: 'men',
+        title: "מגפי שלג יוניסקס Arctic",
+        desc: "בידוד ארקטי לשמירה על חום, סוליה עבה נגד החלקה ועיצוב Round Toe.",
+        price: 44,
+        img: 'Ma1/S805ecb4ac6554cf19b88a22eefefa69es.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c2xmorsV'
+    },
+    {
+        id: 7,
+        cat: 'sandals',
+        gender: 'men',
+        title: "כפכפי אצבע קלועים לקיץ",
+        desc: "סוליה רכה וגמישה נגד החלקה, עיצוב טרנדי לחוף הים.",
+        price: 44,
+        img: 'Ma1/S0ddfa4a7fcb44ce7b9d5fdc1d109aaa2X.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4Dhw4PP'
+    },
+    {
+        id: 8,
+        cat: 'sandals',
+        gender: 'men',
+        title: "כפכפי אצבע נושמים לים",
+        desc: "נעלי חוף קלילות ואווריריות לגבר, עיצוב יוקרתי ונוח.",
+        price: 27,
+        img: 'Ma1/Sc401d7dc03a64d01b8b6822d92fd656ci.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4DT9Fu9'
+    },
+    {
+        id: 9,
+        cat: 'sandals',
+        gender: 'men',
+        title: "סנדלי חוף ובית Casual",
+        desc: "סליידס רכים ונוחים לשימוש פנימי וחיצוני, מתאימים גם לנשים.",
+        price: 58,
+        img: 'Ma1/Sf589c39bd2c44e2d9e927cea3c067506p.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4MRaCPn'
+    },
+        {
+        id: 10,
+        cat: 'boots',
+        gender: 'men',
+        title: "נעלי בטיחות Steel Toe Cap לגבר",
+        desc: "נעלי עבודה והגנה חסינות דקירה, מתאימות לעבודות בנייה וכוללות הגנת אצבעות מפלדה.",
+        price: 100,
+        img: 'Ma1/S87fa6ee46eaf4d72b9f48fb9c17baf9dB.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3tUnnRF'
+    },
+    {
+        id: 11,
+        cat: 'sandals',
+        gender: 'men',
+        title: "כפכפי קיץ קז'ואל נגד החלקה",
+        desc: "סנדלי חוף קלים בעיצוב קוריאני, מתאימים לסטודנטים ולשימוש ביתי.",
+        price: 27,
+        img: 'Ma1/S65ee96917f0942f5996824a8e6962e68J.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4OAiYGD'
+    },
+    {
+        id: 12,
+        cat: 'boots',
+        gender: 'women',
+        title: "מגפי שלג פרוותיים לנשים - חורף 2025",
+        desc: "נעלי בית מרופדות בפרווה מלאכותית, סוליה עבה ומונעת החלקה לשמירה על חום ונוחות.",
+        price: 33,
+        img: 'Ma1/Sd1bd9f9e7a764258a108c3986ff12d94P.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3kXlVzP'
+    },
+    {
+        id: 13,
+        cat: 'long_pants',
+        gender: 'men',
+        title: "מכנסי קז'ואל גזרה ישרה לגבר",
+        desc: "מכנסי ג'וגר בגזרה סלים פיט עם מותן אלסטית, סגנון קוריאני קלאסי. זמין גם במידות גדולות.",
+        price: 4,
+        img: 'Ma1/S298a9e271b5347b8a9855b84f0166a42y.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4sgN9jx'
+    },
+    {
+        id: 14,
+        cat: 'long_pants',
+        gender: 'men',
+        title: "מכנסי דגמ\"ח (Cargo) כותנה לגבר",
+        desc: "מכנסי עבודה וטיפוס לעונות המעבר והקיץ. גזרה נוחה, זמין עד מידה 6XL.",
+        price: 57,
+        img: 'Ma1/H716a8900a6d04fc3bf8d96c9bc9f5250c.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3lWmIw9'
+    },
+    {
+        id: 15,
+        cat: 'short_shirts',
+        gender: 'men',
+        title: "חולצת פולו עסקית שרוול קצר",
+        desc: "חולצת POLO בצבע חלק, בד נושם ונוח המתאים לקיץ ולמראה ורסטילי ואופנתי.",
+        price: 35,
+        img: 'Ma1/S8218998bf90b41aab27ef8022d5625d42.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3QaQIjR'
+    },
+    {
+        id: 16,
+        cat: 'short_pants',
+        gender: 'men',
+        title: "מכנסי שורט קורדרוי לגבר",
+        desc: "מכנסי חוף וספורט קלילים, מתאימים לכדורסל ולפנאי עם תווית אופנתית.",
+        price: 33,
+        img: 'Ma1/S6c2eae20355d470586f6f66dac47a36a9.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3aYGoLJ'
+    },
+        {
+        id: 17,
+        cat: 'short_shirts',
+        gender: 'men',
+        title: "חולצת לחץ Bat-Man לאימון",
+        desc: "חולצת דחיסה אלסטית ונושמת, מתאימה לאימוני כושר, ריצה ופעילות Outdoor.",
+        price: 25,
+        img: 'Ma1/S7158d6c616804eeaaaf6c3ec985d182ak.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4EzoEH3'
+    },
+    {
+        id: 18,
+        cat: 'short_shirts',
+        gender: 'men',
+        title: "חולצת פולו 100% כותנה",
+        desc: "חולצת פולו אופנתית עם רקמת פוני, סגנון קז'ואל-ביזנס איכותי למראה יוקרתי.",
+        price: 64,
+        img: 'Ma1/S311197fa40214ee18048c5b677946608N.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c3WK8m9b'
+    },
+    {
+        id: 19,
+        cat: 'short_shirts',
+        gender: 'men',
+        title: "חולצת טי-שרט כותנה רחבה",
+        desc: "חולצה עם הדפס אותיות גדולות, גזרת Loose Fit נוחה בסגנון High Street יוניסקס.",
+        price: 31,
+        img: 'Ma1/S547210a81dde408c90b9e7f34e7d8725S.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4W6tBn7'
+    },
+    {
+        id: 20,
+        cat: 'long_shirts',
+        gender: 'women',
+        title: "בלייזר וינטג' כפול כפתורים",
+        desc: "ז'קט מחויט עם כיסים ושרוולים ארוכים, מתאים למראה משרדי ואלגנטי.",
+        price: 97,
+        img: 'Ma1/S5b15c8f106d6441f9cf7d4805bf77749e.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c4egeW69'
+    },
+    {
+        id: 21,
+        cat: 'long_shirts',
+        gender: 'women',
+        title: "ז'קט בומבר קרופ עם רוכסן",
+        desc: "ז'קט ספורטיבי רך בגזרת קרופ, שרוול ארוך. דגם חדש לקולקציית 2025.",
+        price: 86,
+        img: 'Ma1/Sedb6f777c20947c88574404201c00a36k.jpg.avif',
+        link: 'https://s.click.aliexpress.com/e/_c2RiwK9b'
+    },
 
 
-  { id: 9, cat: 'men', tag: 'slippers', title: 'כפכפי פלטפורמה EVA מודפסים', price: '₪27.40', img: 'Ma1/S84607340a9b54435b2e059364e3c1d5ej.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3dZmhs5', desc: 'כפכפי נוחות מעוצבים לזוגות, עשויים מחומר EVA בעל גמישות גבוהה (High Elastic) המעניק תחושת ריחוף בכל צעד. בעלי סוליה עבה וקלה במיוחד, עמידים למים ומתאימים לבילוי בחוף הים או בבריכה. עיצוב מודפס וצעיר הזמין במגוון מידות גדולות.' },
-  { id: 10, cat: 'men', tag: 'slippers', title: 'כפכפי Thick Sole אופנתיים 2025', price: '₪33.29', img: 'Ma1/S533fe869bf1a4561ad0b1d6030eb5872w.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3DIQeIl', desc: 'דגם חדש לשנת 2025 של כפכפי נוחות עם סוליה עבה ובולמת זעזועים. הכפכפים קלילים במיוחד, מונעים החלקה ומתאימים לשימוש בבית, במקלחת או כנעלי אופנה יומיומיות בחוץ. עיצוב מודרני המשלב נוחות מקסימלית עם סטייל עדכני.' },
-  { id: 11, cat: 'men', tag: 'work', title: 'נעלי עבודה מגן עם חיזוק פלדה', price: '₪84.81', img: 'Ma1/Tavagvarim1.avif', link: 'https://s.click.aliexpress.com/e/_c3EuarLn', desc: 'נעלי עבודה עמידות במיוחד עם קצה פלדה מגן. עמידות בפני החלקה ושחיקה, אידיאליות לעבודה קשה. סניקרס גברים עמידים ונוחים.' },
-  { id: 12, cat: 'men', tag: 'slippers', title: 'כפכפי מסאז ואוורור לים', price: '₪29.72', img: 'Ma1/S8ecc1d54e9a245a2b0103ef2bec6cee4i.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c35XhrHf', desc: 'כפכפי אצבע יוקרתיים לגברים המעניקים תחושת עיסוי בכל צעד. עשויים מחומרים נושמים וקלילים, אידיאליים לחוף הים או לבריכה. עיצוב עמיד ונוח במיוחד, זמין גם במידות גדולות (עד מידה 46).' },
-  { id: 13, cat: 'men', tag: 'slippers', title: 'כפכפי EVA מתכווננים לקיץ', price: '₪45.44', img: 'Ma1/Sa036cfca61ca488aa9ed50129ea2d45cw.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c32z55Hr', desc: 'כפכפי נוחות קלילים במיוחד העשויים מחומר EVA איכותי. כוללים רצועות מתכווננות להתאמה מושלמת לכף הרגל וסוליה מונעת החלקה. מושלמים לים, לבריכה או ליומיום, זמינים במגוון רחב של מידות (עד 49).' },
-  { id: 14, cat: 'men', tag: 'elegant', title: 'נעלי עור Zimni קלאסיות', price: '₪28.67', img: 'Ma1/S30e8a038524a40ba9a25c812afd7928ev.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3pgBu45', desc: 'נעלי עור איכותיות בעיצוב יוקרתי המתאים לאירועים, חתונות או ליום-יום. שילוב מושלם של נוחות וסטייל עם גימור ברמה גבוהה.' },
-  { id: 15, cat: 'men', tag: 'sneakers', title: 'סניקרס גברים Outdoor קלות ונושמות', price: '₪22.44', img: 'Ma1/S4a6d54bf660f4e1595ac4e50ac26c4d0S.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3SJnSOh', desc: 'נעלי ריצה וכושר באיכות גבוהה, מעוצבות לנוחות מקסימלית בפעילות חוץ. עשויות בד רשת (Mesh) מאוורר עם סוליה רכה וגמישה, מתאימות גם כנעלי זוגות אופנתיות וקלות משקל.' },
-  { id: 16, cat: 'men', tag: 'sneakers', title: 'סניקרס מעצבים Casual Platform', price: '₪30.71', img: 'Ma1/S242a4b62321d4915ab637d161a4bf4876.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c40jcjvx', desc: 'נעלי סניקרס אופנתיות בעיצוב מעצבים מודרני עם סוליית פלטפורמה מוגבהת. שילוב מושלם של סטייל ונוחות יומיומית, מתאימות במיוחד לסטודנטים ולמראה אורבני עדכני עם סגירת שרוכים קלאסית.' },
-  { id: 17, cat: 'men', tag: 'work', title: 'מגפי בטיחות Indestructible חסיני מים', price: '₪118.73', img: 'Ma1/S2662aacb61fc47acafdd3433505596c1O.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c4BnVIbf', desc: 'מגפי עבודה עוצמתיים עם הגנת בוהן מפלדה (Steel Toe) וסוליה חסינת דקירות. המגפיים עמידים לחלוטין למים, מגנים מפני מעיכה ומתאימים לעבודה בתנאים קשים, רכיבה על אופנוע או טיולי שטח. שילוב מושלם של בטיחות מקסימלית ומראה קרבי.' },
-  { id: 19, cat: 'men', tag: 'sneakers', title: 'סניקרס Air Cushion מקצועיות', price: '₪22.95', img: 'Ma1/Sb86324ffdc4142d18ac8b3261a0ea0f60.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c4Krty6d', desc: 'נעלי ספורט וריצה יוניסקס עם טכנולוגיית כרית אוויר מתקדמת לבלימת זעזועים מקסימלית. גפה עשויה בד רשת (Mesh) נושם השומר על אוורור כף הרגל, מתאימות לטניס, כדורסל ופעילות גופנית אינטנסיבית בעיצוב מודרני וקליל.' },
-  { id: 20, cat: 'men', tag: 'sneakers', title: 'נעלי MIXIDELAI אופנתיות עמידות למים', price: '₪70.73', img: 'Ma1/HTB1lMT4afvsK1RjSspdq6AZepXas.jpg.avif', link: 'https://s.click.aliexpress.com/e/_c3kfiyud', desc: 'נעלי קזואל איכותיות לגברים המשלבות נוחות ועמידות למים לפעילות חוץ. עיצוב Lace-Up קלאסי עם סוליית גומי חזקה, מתאימות במיוחד לעונות המעבר ולמראה יומיומי מוקפד. זמין במידות גדולות (39-47).' }
 ];
 
+
+let favorites = JSON.parse(localStorage.getItem('favs')) || [];
+let clickedHistory = JSON.parse(localStorage.getItem('clickedHistory')) || [];
+
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+function toggleSubMenu(id) { document.getElementById(id).classList.toggle('show'); }
+
+// פונקציה לשמירת היסטוריית לחיצות בלבד
+function trackClick(cat, gender) {
+    const history = { cat, gender };
+    localStorage.setItem('lastClicked', JSON.stringify(history));
+}
+
+function toggleFav(id, event) {
+    event.stopPropagation();
+    favorites.includes(id) ? favorites = favorites.filter(i => i !== id) : favorites.push(id);
+    localStorage.setItem('favs', JSON.stringify(favorites));
+    renderCurrentView();
+}
+
+let currentView = { type: 'home', cat: null, gender: null };
+
+function showPage(type) {
+    currentView = { type, cat: null, gender: null };
+    if (document.getElementById('sideNav').classList.contains('open')) toggleMenu();
+    renderCurrentView();
+    window.scrollTo(0,0);
+}
+
+function showCategoryPage(cat, gender) {
+    currentView = { type: 'category', cat, gender };
+    toggleMenu();
+    renderCurrentView();
+    window.scrollTo(0,0);
+}
+
+function renderCurrentView() {
+    const content = document.getElementById('main-content');
+    if (currentView.type === 'home') renderHome(content);
+    else if (currentView.type === 'about') renderAbout(content);
+    else renderCategory(content);
+}
+
 function createCard(p) {
+    const isFav = favorites.includes(p.id);
+    const roundedPrice = Math.ceil(p.price);
     return `
     <div class="card">
-      <img src="${p.img}" alt="${p.title}">
-      <div class="card-body">
-        <h3>${p.title}</h3>
-        <p>${p.desc}</p>
-        <div class="rating">★★★★★</div>
-        <div class="price-tag">${p.price}</div>
-        <a class="btn" href="${p.link}" target="_blank" onclick="trackClick('${p.tag}')">לקנייה</a>
-      </div>
+        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${p.id}, event)">❤</button>
+        <img src="${p.img}" alt="${p.title}">
+        <div class="card-body">
+            <h3>${p.title}</h3>
+            <div class="desc">${p.desc || ''}</div>
+            <div class="price">₪${roundedPrice}</div>
+            <a href="${p.link}" class="btn" target="_blank" onclick="trackClick('${p.cat}', '${p.gender}')">לקנייה</a>
+        </div>
     </div>`;
 }
 
-function trackClick(tag) {
-    localStorage.setItem('lastClickedTag', tag);
-}
-
-function showPage(pageId) {
-    const content = document.getElementById('main-content');
-    content.innerHTML = '';
-    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-    const navBtn = document.getElementById('nav-' + pageId);
-    if (navBtn) navBtn.classList.add('active');
-    window.scrollTo(0, 0);
-
-    if (pageId === 'home') renderHomePage(content);
-    else if (pageId === 'about') renderAboutPage(content);
-    else renderCategoryPage(content, pageId);
-}
-
-function renderHomePage(container) {
-    const lastTag = localStorage.getItem('lastClickedTag');
-    let html = `<h2>ברוכים הבאים ל-Orvanni</h2>`;
+function renderHome(container) {
+    let html = `<h2 class="section-title">הבחירות עבורך</h2>`;
+    const favItems = allProducts.filter(p => favorites.includes(p.id));
+    let hasContent = false;
     
-    // חלק 1: המלצות מבוססות הקלקות אחרונות
-    if (lastTag) {
-        const recommendations = allProducts.filter(p => p.tag === lastTag).slice(0, 4);
-        if (recommendations.length > 0) {
-            html += `
-            <div class="recommendation-section">
-                <h3 style="text-align: right; padding: 0 10px;">⭐ מבוסס על מה שאהבת</h3>
-                <div class="products">${recommendations.map(p => createCard(p)).join('')}</div>
-            </div>`;
-        }
+    if (favItems.length > 0) {
+        html += `<h3>⭐ המועדפים שלך</h3><div class="products">${favItems.map(createCard).join('')}</div>`;
+        hasContent = true;
     }
 
-    // חלק 2: גילוי - מוצרים מקטגוריות אחרות (מניעת חזרתיות)
-    html += `<h3 style="text-align: right; padding: 0 10px;">גלה פריטים חדשים</h3>
-             <div class="products">`;
+    const last = JSON.parse(localStorage.getItem('lastClicked'));
+    if (last) {
+        const suggested = allProducts.filter(p => p.cat === last.cat && p.gender === last.gender).slice(0, 4);
+        if(suggested.length > 0) {
+            html += `<h3 style="margin-top:40px;">🔍 מבוסס על מוצרים שאהבת</h3>
+                     <div class="products">${suggested.map(createCard).join('')}</div>`;
+            hasContent = true;
+        }
+    }
     
-    const otherProducts = allProducts
-        .filter(p => p.tag !== lastTag)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 12);
-        
-    html += otherProducts.map(p => createCard(p)).join('');
-    html += `</div>`;
-    
+    if (!hasContent) {
+        html += `<div class="banner"><p>שלום! ברוכים הבאים ל-Orvanni. כאן יופיעו מוצרים שסימנת ב-❤ או מוצרים דומים לאלו שלחצת עליהם.</p></div>`;
+    }
     container.innerHTML = html;
 }
 
-function renderCategoryPage(container, cat) {
-    const catNames = { women: '👠 נעלי נשים', men: '👞 נעלי גברים', kids: '👟 נעלי ילדים' };
-    const filtered = allProducts.filter(p => p.cat === cat);
-    let html = `<h2>${catNames[cat]}</h2>`;
-    html += `<div class="products">${filtered.map(p => createCard(p)).join('')}</div>`;
+function renderCategory(container) {
+    const filtered = allProducts.filter(p => p.cat === currentView.cat && p.gender === currentView.gender);
+    const genderHeb = currentView.gender === 'men' ? 'גברים' : 'נשים';
+    let html = `<h2 class="section-title">${categoryNames[currentView.cat]} - ${genderHeb}</h2>`;
+    html += filtered.length > 0 ? `<div class="products">${filtered.map(createCard).join('')}</div>` : `<p>בקרוב יעלו מוצרים חדשים.</p>`;
     container.innerHTML = html;
 }
 
-function renderAboutPage(container) {
-    container.innerHTML = `
-    <div class="banner">
-      <h2 style="margin-top: 0; text-align: right;">📜 תקנון ותנאי שימוש - Orvanni</h2>
-      <p>ברוכים הבאים לאתר Orvanni (להלן: "האתר"). השימוש באתר, בתכניו ובשירותיו כפוף להסכמתכם המלאה והבלתי מסויגת לתנאים המפורטים להלן. גלישה באתר מהווה הצהרה כי קראתם והבנתם את התקנון.</p>
-      
-      <h3>1. מהות האתר והשירות</h3>
-      <p>אתר Orvanni משמש כפלטפורמה להצגת מוצרי אופנה והנעלה המשתנים מעת לעת. האתר אינו חנות מקוונת, אינו מחזיק במלאי מוצרים ואינו מבצע עסקאות מכירה ישירות מול המשתמשים. תפקיד האתר מתמצה בהפניית הגולשים באמצעות קישורים לאתרי מסחר חיצוניים (כדוגמת AliExpress).</p>
-      
-      <h3>2. היעדר אחריות למידע ולמחירים</h3>
-      <p>כל המידע המוצג באתר, לרבות מחירי מוצרים, תמונות, מפרטים טכניים וזמינות מלאי, נשאב מאתרים שלישיים במועד העלאת התוכן. <strong>מובהר בזאת כי המידע עשוי להיות לא מדויק, חלקי או לא מעודכן.</strong> המחיר הקובע והמידע המחייב הם אך ורק אלו המופיעים באתר המוכר בפועל בעת ביצוע הרכישה. האתר לא יישא באחריות לכל פער בין המידע המוצג בו לבין המידע באתר המוכר.</p>
-      
-      <h3>3. הגבלת אחריות בגין רכישות</h3>
-      <p>כל התקשרות או עסקה שתבוצע על ידי המשתמש בעקבות צפייה באתר זה, תיעשה מול האתר החיצוני בלבד. Orvanni אינה צד לעסקה ואינה אחראית בשום צורה על: איכות המוצר, תקינותו, תהליך המשלוח, זמני ההספקה או שירות לקוחות. השימוש בקישורים והרכישה הם על אחריותו הבלעדית של המשתמש.</p>
-      
-      <h3>4. גילוי נאות - תוכניות שותפים (Affiliate)</h3>
-      <p>בהתאם לחובת הגילוי הנאות, אנו מעדכנים כי חלק מהקישורים באתר הינם "קישורי שותפים". משמעות הדבר היא כי במידה ותבצעו רכישה דרך קישור כזה, האתר עשוי לקבל עמלה קטנה ללא כל עלות נוספת מצדכם. עמלות אלו מאפשרות לנו להמשיך להפעיל ולתחזק את האתר עבורכם.</p>
-      
-      <h3>5. סמכות שיפוט</h3>
-      <p>על תנאי שימוש אלו יחולו אך ורק דיני מדינת ישראל. מקום השיפוט הבלעדי לכל עניין הנוגע להסכם זה יהיה בבתי המשפט המוסמכים במחוז חיפה.</p>
-    </div>`;
+function renderAbout(container) {
+    container.innerHTML = `<div class="banner"><h2>📜 תנאי שימוש</h2><p>אתר Orvanni משמש כפלטפורמה להצגת מוצרי אופנה בלבד. האתר אינו חנות ומפנה לאתרים חיצוניים...</p></div>`;
 }
 
-function acceptCookies() {
-  localStorage.setItem("cookiesAccepted", "yes");
-  document.getElementById("cookieBox").style.display = "none";
+function initMenu() {
+    const placeholder = document.getElementById('menu-items-placeholder');
+    let menuHtml = '';
+    for (const [key, label] of Object.entries(categoryNames)) {
+        menuHtml += `
+        <div class="nav-item">
+            <div class="nav-link" onclick="toggleSubMenu('sub-${key}')">${label} <span>▼</span></div>
+            <div class="sub-menu" id="sub-${key}">
+                <a onclick="showCategoryPage('${key}', 'men')">גברים</a>
+                <a onclick="showCategoryPage('${key}', 'women')">נשים</a>
+            </div>
+        </div>`;
+    }
+    placeholder.innerHTML = menuHtml;
 }
 
-window.onload = function() {
-  showPage('home');
-  if (!localStorage.getItem("cookiesAccepted")) {
-    document.getElementById("cookieBox").style.display = "block";
-  }
-}
-
-window.onscroll = function() {
-  let btn = document.getElementById("backToTop");
-  if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-    btn.style.display = "flex";
-  } else {
-    btn.style.display = "none";
-  }
-};
+window.onload = () => { initMenu(); showPage('home'); };
 </script>
 </body>
 </html>
+
