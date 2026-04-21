@@ -34,23 +34,27 @@ body {
     top: 0;
     right: -320px;
     width: 300px;
-    height: 100%; /* תופס את כל גובה המסך */
+    height: 100%;
     background: white;
     z-index: 2000;
     box-shadow: -5px 0 25px rgba(0,0,0,0.15);
     transition: 0.4s ease;
     
-    /* פתרון הגלילה: */
-    overflow-y: auto; /* מאפשר גלילה אנכית */
-    padding-top: 80px; /* רווח מלמעלה שלא יתנגש בכפתור ה-X */
-    padding-bottom: 100px; /* הוספת "אוויר" בתחתית כדי שהפריט האחרון לא ייבלע */
-    
-    /* מונע מהתפריט לזוז לצדדים בטעות */
-    overflow-x: hidden; 
+    /* פתרון גלילה מבני */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-
 .side-nav.open { right: 0; }
+
+/* אזור גלילה פנימי לקטגוריות בלבד */
+#menu-items-placeholder {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
+}
 
 .nav-item { border-bottom: 1px solid #f0f0f0; }
 .nav-link {
@@ -108,9 +112,13 @@ footer { background: #000; color: white; text-align: center; padding: 50px; marg
 <div class="floating-menu-btn" onclick="toggleMenu()">☰</div>
 
 <div class="side-nav" id="sideNav">
-    <a class="nav-link" onclick="showPage('home')">🏠 דף הבית</a>
+    <div style="padding-top: 60px;">
+        <a class="nav-link" onclick="showPage('home')">🏠 דף הבית</a>
+    </div>
+    
     <div id="menu-items-placeholder"></div>
-    <a class="nav-link" onclick="showPage('about')">📜 תנאי שימוש</a>
+    
+    <a class="nav-link" onclick="showPage('about')" style="border-top: 2px solid #eee; background: #fff; margin-top: auto; padding-bottom: 30px;">📜 תנאי שימוש</a>
 </div>
 
 <header onclick="showPage('home')">
@@ -342,18 +350,14 @@ const allProducts = [
         img: 'Ma1/Sedb6f777c20947c88574404201c00a36k.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c2RiwK9b'
     },
-
-
 ];
 
 
 let favorites = JSON.parse(localStorage.getItem('favs')) || [];
-let clickedHistory = JSON.parse(localStorage.getItem('clickedHistory')) || [];
 
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
 function toggleSubMenu(id) { document.getElementById(id).classList.toggle('show'); }
 
-// פונקציה לשמירת היסטוריית לחיצות בלבד
 function trackClick(cat, gender) {
     const history = { cat, gender };
     localStorage.setItem('lastClicked', JSON.stringify(history));
@@ -377,7 +381,7 @@ function showPage(type) {
 
 function showCategoryPage(cat, gender) {
     currentView = { type: 'category', cat, gender };
-    toggleMenu();
+    if (document.getElementById('sideNav').classList.contains('open')) toggleMenu();
     renderCurrentView();
     window.scrollTo(0,0);
 }
@@ -466,7 +470,6 @@ function renderAbout(container) {
         <p style="font-size: 0.8rem; color: #777;">עודכן לאחרונה: אפריל 2026</p>
     </div>`;
 }
-
 
 function initMenu() {
     const placeholder = document.getElementById('menu-items-placeholder');
