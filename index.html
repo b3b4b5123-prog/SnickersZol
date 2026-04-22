@@ -422,12 +422,26 @@ function renderHome(container) {
 }
 
 function renderCategory(container) {
-    const filtered = allProducts.filter(p => p.cat === currentView.cat && p.gender === currentView.gender);
+    // סינון חכם: מציג מוצרים שמתאימים לקטגוריה וגם (למגדר שנבחר או ליוניסקס)
+    const filtered = allProducts.filter(p => 
+        p.cat === currentView.cat && 
+        (p.gender === currentView.gender || p.gender === 'unisex')
+    );
+
     const genderHeb = currentView.gender === 'men' ? 'גברים' : 'נשים';
+    
     let html = `<h2 class="section-title">${categoryNames[currentView.cat]} - ${genderHeb}</h2>`;
-    html += filtered.length > 0 ? `<div class="products">${filtered.map(createCard).join('')}</div>` : `<p>בקרוב יעלו מוצרים חדשים.</p>`;
+    
+    if (filtered.length > 0) {
+        html += `<div class="products">${filtered.map(createCard).join('')}</div>`;
+    } else {
+        html += `<p style="text-align: center; padding: 20px;">בקרוב יעלו מוצרים חדשים לקטגוריה זו.</p>`;
+    }
+    
     container.innerHTML = html;
 }
+
+
 
 function renderAbout(container) {
     container.innerHTML = `
