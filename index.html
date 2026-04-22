@@ -38,9 +38,7 @@ body {
     background: white;
     z-index: 2000;
     box-shadow: -5px 0 25px rgba(0,0,0,0.15);
-    /* מעבר מהיר וחלק יותר */
     transition: right 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -48,7 +46,6 @@ body {
 
 .side-nav.open { right: 0; }
 
-/* אזור גלילה פנימי לקטגוריות בלבד */
 #menu-items-placeholder {
     flex-grow: 1;
     overflow-y: auto;
@@ -63,7 +60,6 @@ body {
 }
 .nav-link:hover { background: #fdfaf4; color: var(--gold); }
 
-/* תת תפריט מהיר */
 .sub-menu { 
     display: none; 
     background: #f9f9f9; 
@@ -80,7 +76,22 @@ header h1 { font-size: 3.5rem; margin: 0; letter-spacing: 6px; font-weight: 300;
 .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 70vh; }
 .section-title { border-right: 5px solid var(--gold); padding-right: 15px; margin: 40px 0 30px; }
 
-/* תצוגת מוצרים - 2 טורים בטלפון */
+/* כפתור מיון */
+.sort-container { 
+    display: flex; 
+    justify-content: flex-end; 
+    margin-bottom: 20px; 
+}
+.sort-select { 
+    padding: 8px 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    background: white; 
+    font-size: 0.9rem; 
+    cursor: pointer; 
+    outline: none; 
+}
+
 .products { 
     display: grid; 
     grid-template-columns: repeat(2, 1fr); 
@@ -175,7 +186,6 @@ const allProducts = [
         img: 'Ma1/Se15d7a930f804adabbbba3774bb5510f8.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c37oSDYl'
     },
-    
     {
         id: 5,
         cat: 'sandals',
@@ -226,7 +236,6 @@ const allProducts = [
         img: 'Ma1/Sf589c39bd2c44e2d9e927cea3c067506p.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c4MRaCPn'
     },
-
     {
         id: 11,
         cat: 'sandals',
@@ -337,7 +346,7 @@ const allProducts = [
         img: 'Ma1/Sedb6f777c20947c88574404201c00a36k.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c2RiwK9b'
     },
-        {
+    {
         id: 22,
         cat: 'long_shirts',
         gender: 'women',
@@ -387,17 +396,17 @@ const allProducts = [
         img: 'Ma1/S719f9fb1f43e447a8f7dc4037547a6991.jpg.avif',
         link: 'https://s.click.aliexpress.com/e/_c4FG7fuj'
     },
-
 ];
 
 let favorites = JSON.parse(localStorage.getItem('favs')) || [];
+let currentSort = 'default';
+let currentView = { type: 'home', cat: null, gender: null };
 
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
 function toggleSubMenu(id) { document.getElementById(id).classList.toggle('show'); }
 
 function trackClick(cat, gender) {
-    const history = { cat, gender };
-    localStorage.setItem('lastClicked', JSON.stringify(history));
+    localStorage.setItem('lastClicked', JSON.stringify({ cat, gender }));
 }
 
 function toggleFav(id, event) {
@@ -407,8 +416,6 @@ function toggleFav(id, event) {
     renderCurrentView();
 }
 
-let currentView = { type: 'home', cat: null, gender: null };
-
 function showPage(type) {
     currentView = { type, cat: null, gender: null };
     if (document.getElementById('sideNav').classList.contains('open')) toggleMenu();
@@ -417,10 +424,16 @@ function showPage(type) {
 }
 
 function showCategoryPage(cat, gender) {
+    currentSort = 'default';
     currentView = { type: 'category', cat, gender };
     if (document.getElementById('sideNav').classList.contains('open')) toggleMenu();
     renderCurrentView();
     window.scrollTo(0,0);
+}
+
+function changeSort(val) {
+    currentSort = val;
+    renderCurrentView();
 }
 
 function renderCurrentView() {
@@ -432,7 +445,6 @@ function renderCurrentView() {
 
 function createCard(p) {
     const isFav = favorites.includes(p.id);
-    const roundedPrice = Math.ceil(p.price);
     return `
     <div class="card">
         <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${p.id}, event)">❤</button>
@@ -440,7 +452,7 @@ function createCard(p) {
         <div class="card-body">
             <h3>${p.title}</h3>
             <div class="desc">${p.desc || ''}</div>
-            <div class="price">₪${roundedPrice}</div>
+            <div class="price">₪${Math.ceil(p.price)}</div>
             <a href="${p.link}" class="btn" target="_blank" onclick="trackClick('${p.cat}', '${p.gender}')">לקנייה</a>
         </div>
     </div>`;
@@ -448,7 +460,7 @@ function createCard(p) {
 
 function renderHome(container) {
     let html = `<h2 class="section-title">הבחירות עבורך</h2>`;
-    const favItems = allProducts.filter(p => favorites.includes(p.id));
+    const favItems = allProducts.filter(p => favorites.includes(p.id)).sort((a,b) => a.id - b.id);
     let hasContent = false;
     
     if (favItems.length > 0) {
@@ -458,7 +470,7 @@ function renderHome(container) {
 
     const last = JSON.parse(localStorage.getItem('lastClicked'));
     if (last) {
-        const suggested = allProducts.filter(p => p.cat === last.cat && p.gender === last.gender).slice(0, 4);
+        const suggested = allProducts.filter(p => p.cat === last.cat && (p.gender === last.gender || p.gender === 'unisex')).slice(0, 4);
         if(suggested.length > 0) {
             html += `<h3 style="margin-top:40px;">🔍 מבוסס על מוצרים שאהבת</h3>
                      <div class="products">${suggested.map(createCard).join('')}</div>`;
@@ -473,15 +485,26 @@ function renderHome(container) {
 }
 
 function renderCategory(container) {
-    // סינון חכם: מציג מוצרים שמתאימים לקטגוריה וגם (למגדר שנבחר או ליוניסקס)
-    const filtered = allProducts.filter(p => 
+    let filtered = allProducts.filter(p => 
         p.cat === currentView.cat && 
         (p.gender === currentView.gender || p.gender === 'unisex')
     );
+    
+    if (currentSort === 'low') filtered.sort((a, b) => a.price - b.price);
+    else if (currentSort === 'high') filtered.sort((a, b) => b.price - a.price);
+    else filtered.sort((a, b) => a.id - b.id);
 
     const genderHeb = currentView.gender === 'men' ? 'גברים' : 'נשים';
-    
-    let html = `<h2 class="section-title">${categoryNames[currentView.cat]} - ${genderHeb}</h2>`;
+    let html = `
+        <h2 class="section-title">${categoryNames[currentView.cat]} - ${genderHeb}</h2>
+        <div class="sort-container">
+            <select class="sort-select" onchange="changeSort(this.value)">
+                <option value="default" ${currentSort === 'default' ? 'selected' : ''}>מיון: ברירת מחדל</option>
+                <option value="low" ${currentSort === 'low' ? 'selected' : ''}>מחיר: מהנמוך לגבוה</option>
+                <option value="high" ${currentSort === 'high' ? 'selected' : ''}>מחיר: מהגבוה לנמוך</option>
+            </select>
+        </div>
+    `;
     
     if (filtered.length > 0) {
         html += `<div class="products">${filtered.map(createCard).join('')}</div>`;
@@ -491,8 +514,6 @@ function renderCategory(container) {
     
     container.innerHTML = html;
 }
-
-
 
 function renderAbout(container) {
     container.innerHTML = `
