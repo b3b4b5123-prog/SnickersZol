@@ -610,7 +610,8 @@ function createCard(p) {
     return `
     <div class="card">
         <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${p.id}, event)">❤</button>
-        <img src="${p.img}" alt="${p.title}">
+        <img src="${p.img}" alt="${p.title}"
+        loading="lazy">
         <div class="card-body">
             <h3>${p.title}</h3>
             <div class="desc">${p.desc || ''}</div>
